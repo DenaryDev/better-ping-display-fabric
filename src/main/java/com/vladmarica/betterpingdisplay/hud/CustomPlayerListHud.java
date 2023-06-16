@@ -6,6 +6,7 @@ import com.vladmarica.betterpingdisplay.config.Config;
 import com.vladmarica.betterpingdisplay.mixin.PlayerListHudInvoker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.PlayerListHud;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
@@ -16,7 +17,7 @@ public final class CustomPlayerListHud {
   private static final Config CONFIG = BetterPingDisplayMod.instance().getConfig();
 
   public static void renderPingDisplay(
-          MinecraftClient client, PlayerListHud hud, MatrixStack matrixStack, int width, int x, int y, PlayerListEntry player) {
+          MinecraftClient client, PlayerListHud hud, DrawContext context, int width, int x, int y, PlayerListEntry player) {
     TextRenderer textRenderer = client.textRenderer;
 
     String pingString = String.format(CONFIG.getPingTextFormat(), player.getLatency());
@@ -29,10 +30,10 @@ public final class CustomPlayerListHud {
     }
 
     // Draw the ping text for the given player
-    textRenderer.drawWithShadow(matrixStack, pingString, (float) textX, (float) y, pingTextColor);
+    context.drawTextWithShadow(textRenderer, pingString, textX, y, pingTextColor);
 
     if (CONFIG.shouldRenderPingBars()) {
-      ((PlayerListHudInvoker) hud).invokeRenderLatencyIcon(matrixStack, width, x, y, player);
+      ((PlayerListHudInvoker) hud).invokeRenderLatencyIcon(context, width, x, y, player);
     } else {
       // If we don't render ping bars, we need to reset the render system color so the rest
       // of the player list renders properly
